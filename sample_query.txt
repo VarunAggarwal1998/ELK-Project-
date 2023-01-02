@@ -1,0 +1,60 @@
+Run Pipeline: logstash -f /usr/share/logstash/pipeline/restaurants_pipeline.conf --path.data /usr/share/logstash/dataDump
+
+
+# Find restaurants with name including 'burger' and rating >=3.5
+
+GET /restaurants_reviews/_search
+{
+    "query": {
+        "bool": {
+            "must": [{
+                "match": {
+                    "name": "burger"
+                }
+            }, {
+                "range": {
+                    "stars": {
+                        "gte": 3.5
+                    }
+                }
+            }]
+        }
+    }
+}
+
+# Find restaurants with (customer rating >=4 and reviews >1000) OR stars > 4.5
+
+
+GET /restaurants_reviews/_search
+{
+    "query": {
+        "bool": {
+            "should": [{
+              "bool": {
+                "must": [
+                  {
+                    "range": {
+                        "customer_stars": {
+                            "gte": 3.5
+                        }
+                    }
+                  }, {
+                    "range": {
+                        "review_count": {
+                            "gt": 1000
+                        }
+                    }
+                  }
+                ]
+              }
+            }, {
+                "range": {
+                    "stars": {
+                        "gte": 3.5
+                    }
+                }
+            }
+          ]
+        }
+    }
+}
